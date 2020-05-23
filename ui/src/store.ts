@@ -24,7 +24,6 @@ import Info from '@/interfaces/info'
 import TaskOptions from '@/interfaces/taskOptions'
 import TileConfig from '@/interfaces/tileConfig'
 import TileState from '@/interfaces/tileState'
-import {config} from '@vue/test-utils'
 
 Vue.use(Vuex)
 
@@ -198,6 +197,11 @@ const store: StoreOptions<RootState> = {
 
       return isOnWelcomePageRoute || getters.isNewUser || getters.hasUnknownDefaultConfigError
     },
+    shouldInit(state, getters): boolean {
+      const isOnChooseConfigurationPageRoute = Route.ChooseConfiguration === getters.currentRoute
+
+      return !isOnChooseConfigurationPageRoute
+    },
   },
   mutations: {
     setAppVersion(state, payload: string): void {
@@ -271,6 +275,8 @@ const store: StoreOptions<RootState> = {
             configMetadata.uiUrl = uiUrl
 
             return configMetadata
+          }).sort((configMetadataA: ConfigMetadata, configMetadataB: ConfigMetadata) => {
+            return configMetadataA.name.localeCompare(configMetadataB.name)
           })
 
           commit('setConfigList', configList)
